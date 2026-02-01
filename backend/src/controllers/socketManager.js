@@ -72,8 +72,6 @@ export const connectToSocket = (server) => {
           "socket-id-sender": socket.id,
         });
 
-        console.log("message:", sender, data);
-
         connection[matchingRoom].forEach((socketId) => {
           io.to(socketId).emit("chat-message", data, sender, socket.id);
         });
@@ -103,7 +101,6 @@ export const connectToSocket = (server) => {
       }
 
       delete timeOnline[socket.id];
-      console.log("user disconnected:", socket.id, "online time:", diffTime, "ms");
     });
 
   });

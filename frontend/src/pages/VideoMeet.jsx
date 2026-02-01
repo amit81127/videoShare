@@ -111,7 +111,6 @@ export default function VideoMeetComponent() {
         socketRef.current = io.connect(SERVER_URL);
 
         socketRef.current.on('connect', () => {
-            console.log("Connected to server");
             socketRef.current.emit('join-call', { roomId: url, username });
             setLoading(false);
             setAskForUsername(false);
@@ -131,12 +130,9 @@ export default function VideoMeetComponent() {
         });
 
         socketRef.current.on('user-joined', (id, clients) => {
-            console.log("User joined:", id);
             showSnackbar("A new user joined the meeting", "info");
             clients.forEach((socketListId) => {
                 if (socketListId === socketRef.current.id || connectionsRef.current[socketListId]) return;
-
-                console.log("Initiating connection to", socketListId);
                 const peer = new RTCPeerConnection(peerConfig);
                 connectionsRef.current[socketListId] = peer;
 
@@ -165,7 +161,6 @@ export default function VideoMeetComponent() {
         });
 
         socketRef.current.on('user-left', (id) => {
-            console.log("User left:", id);
             showSnackbar("User left the meeting", "info");
             if (connectionsRef.current[id]) {
                 connectionsRef.current[id].close();

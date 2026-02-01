@@ -29,9 +29,8 @@ app.get("/", (req, res) => {
 
 const start=async()=>{
     const connectonDb=await mongoose.connect(process.env.MONGODB_URL);
-    console.log(`Database connected to ${connectonDb.connection.host}`);
     server.listen(app.get("port"),()=>{
-        console.log("Server is running on port 8000");
+        console.log("Server");
     });
 
 }
