@@ -89,7 +89,6 @@ export default function VideoMeetComponent() {
                 localPreviewRef.current.srcObject = stream;
             }
         } catch (err) {
-            console.error("Error accessing media", err);
             setVideoAvailable(false);
             setAudioAvailable(false);
             showSnackbar("Could not access camera/microphone. Please check permissions.", "error");
@@ -264,7 +263,6 @@ export default function VideoMeetComponent() {
                 setScreen(true);
                 setVideo(true); // Ensure video is "on" so overlay doesn't block screen share
             } catch (e) {
-                console.error("Error sharing screen", e);
                 showSnackbar("Failed to share screen", "error");
             }
         } else {
@@ -292,7 +290,6 @@ export default function VideoMeetComponent() {
                 setVideo(true);
                 setScreen(false);
             } catch (e) {
-                console.error("Error reverting to camera", e);
                 showSnackbar("Failed to revert to camera", "error");
             }
         }
