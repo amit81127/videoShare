@@ -45,7 +45,6 @@ export default function Authentication() {
             setUsername("");
             setPassword("");
         } catch (err) {
-            console.error(err);
             let errMsg = err?.response?.data?.message || err?.message || "Authentication failed";
             setError(errMsg);
         } finally {

@@ -1,4 +1,4 @@
-# 🎥 Apna Video Call - Video Conferencing Application
+# 🎥 meetup - Video Conferencing Application
 
 A modern, feature-rich video conferencing application built with React, Node.js, Socket.IO, and WebRTC. Connect with friends, family, and colleagues through high-quality video calls with real-time chat, screen sharing, and more.
 

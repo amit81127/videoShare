@@ -27,6 +27,10 @@ app.get("/", (req, res) => {
     res.send("Hello from Backend Server. Everything is working fine!");
 });
 
+app.use((req, res) => {
+    res.status(404).json({ message: "API route not found" });
+});
+
 const start=async()=>{
     const connectonDb=await mongoose.connect(process.env.MONGODB_URL);
     server.listen(app.get("port"),()=>{
