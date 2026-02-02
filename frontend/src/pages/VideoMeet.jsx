@@ -12,9 +12,12 @@ const peerConfig = {
     iceServers: [
         { urls: "stun:stun.l.google.com:19302" },
         { urls: "stun:stun1.l.google.com:19302" },
-        { urls: "stun:stun2.l.google.com:19302" }
     ]
 };
+
+window.addEventListener("unhandledrejection", (e) => {
+    console.error("Unhandled promise:", e.reason);
+});
 
 const VideoElement = ({ stream }) => {
     const videoRef = useRef(null);
@@ -191,6 +194,7 @@ export default function VideoMeetComponent() {
         if (!connectionsRef.current[fromId]) {
             const peer = new RTCPeerConnection(peerConfig);
             connectionsRef.current[fromId] = peer;
+            peer.iceQueue = [];
 
             if (localStreamRef.current) {
                 localStreamRef.current.getTracks().forEach(track => peer.addTrack(track, localStreamRef.current));
@@ -210,6 +214,8 @@ export default function VideoMeetComponent() {
         }
 
         const peer = connectionsRef.current[fromId];
+        // Ensure queue exists
+        if (!peer.iceQueue) peer.iceQueue = [];
 
         if (signal.sdp) {
             peer.setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(() => {
@@ -220,20 +226,21 @@ export default function VideoMeetComponent() {
                         });
                     });
                 }
-                // Process queued candidates if I were implementing a queue, 
-                // but for now, the user's prompt suggests just fixing specific patterns.
-                // The critical part is checking signaling state.
+
+                // Process queued candidates
+                while (peer.iceQueue.length > 0) {
+                    const candidate = peer.iceQueue.shift();
+                    peer.addIceCandidate(candidate).catch(e => console.error("Error adding queued ice candidate", e));
+                }
             }).catch(e => console.error("Error setting remote description", e));
         }
 
         if (signal.ice) {
-            // Prevent "Remote description not set" error
-            if (peer.remoteDescription) {
-                peer.addIceCandidate(new RTCIceCandidate(signal.ice)).catch(e => console.error("Error adding ice candidate", e));
+            const candidate = new RTCIceCandidate(signal.ice);
+            if (peer.remoteDescription && peer.remoteDescription.type) {
+                peer.addIceCandidate(candidate).catch(e => console.error("Error adding ice candidate", e));
             } else {
-                // In a real prod app we queue this. For this fix, let's keep it simple as requested but safer.
-                // Verify if we can just chain it.
-                console.warn("ICE candidate received before remote description");
+                peer.iceQueue.push(candidate);
             }
         }
     };
