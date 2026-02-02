@@ -107,7 +107,9 @@ export default function VideoMeetComponent() {
     const connectToSocketServer = () => {
         if (socketRef.current) return;
 
-        socketRef.current = io.connect(SERVER_URL);
+        socketRef.current = io.connect(SERVER_URL, {
+            transports: ["websocket"]
+        });
 
         socketRef.current.on('connect', () => {
             socketRef.current.emit('join-call', { roomId: url, username });
