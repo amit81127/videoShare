@@ -10,9 +10,28 @@ const SERVER_URL = server;
 
 const peerConfig = {
     iceServers: [
+        // Primary STUN (fast discovery)
         { urls: "stun:stun.l.google.com:19302" },
         { urls: "stun:stun1.l.google.com:19302" },
-    ]
+        { urls: "stun:stun.cloudflare.com:3478" },
+
+        // TURN (MANDATORY for production - uncomment and set env vars)
+        /*
+        {
+            urls: [
+                "turn:turn.yourdomain.com:3478?transport=udp",
+                "turn:turn.yourdomain.com:3478?transport=tcp",
+                "turns:turn.yourdomain.com:5349"
+            ],
+            username: import.meta.env.VITE_TURN_USERNAME,
+            credential: import.meta.env.VITE_TURN_PASSWORD
+        }
+        */
+    ],
+    iceCandidatePoolSize: 10,
+    bundlePolicy: "max-bundle",
+    rtcpMuxPolicy: "require",
+    iceTransportPolicy: "all"
 };
 
 window.addEventListener("unhandledrejection", (e) => {
